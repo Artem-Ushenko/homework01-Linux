@@ -3,6 +3,8 @@
 import os
 import subprocess
 
+def virtual_environment():
+    pass
 
 def install_python():
     pass
@@ -10,9 +12,9 @@ def install_python():
 def install_pip():
     result = subprocess.run(['sudo', 'apt', 'install', 'python-pip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     if result.returncode == 0:
-        return (print("The command completed successfully."))
+        return (print("Pip was installed successfully."))
     else:
-        return (print(f"The command failed with error code: {result.returncode}"))
+        return (print(f"Pip install failed with error code: {result.returncode}"))
 
 def install_mysql():
     pass
@@ -44,4 +46,5 @@ def check_requirements():
             
                                                                
 
-check_requirements()                                             
+check_requirements()
+virtual_environment()
