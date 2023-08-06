@@ -8,14 +8,18 @@ def install_python():
     pass
 
 def install_pip():
-    pass
+    result = subprocess.run(['sudo', 'apt', 'install', 'python-pip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    if result.returncode == 0:
+        return (print("The command completed successfully."))
+    else:
+        return (print(f"The command failed with error code: {result.returncode}"))
 
 def install_mysql():
     pass
 
-def check_rquirements():
+def check_requirements():
    #check Python version 
-    version_info = os.popen('python3 --version 2>&1').read()
+    version_info = os.popen('python3.7 --version 2>&1').read()
     if 'Python 3.7.2' not in version_info:
         print("Python 3.7.2 will be installed now: ")
         install_python()
@@ -24,7 +28,7 @@ def check_rquirements():
 
     #check PIP install
     version_info = os.system('pip --version')
-    if version_info not 0:
+    if version_info != 0:
         print("Pip will be installed now: ")
         install_pip()
     else:
