@@ -10,7 +10,7 @@ def install_python():
     pass
 
 def install_pip():
-    result = subprocess.run(['sudo', 'apt', 'install', 'python-pip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    result = subprocess.run(['sudo', 'apt', 'install', 'python3-pip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     if result.returncode == 0:
         return (print("Pip was installed successfully."))
     else:
