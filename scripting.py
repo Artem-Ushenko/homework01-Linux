@@ -30,7 +30,11 @@ def install_pip():
         return (print(f"The command failed with error code: {result.returncode}"))
 
 def install_mysql():
-    pass
+    subprocess.run(['wget', 'https://dev.mysql.com/get/mysql-apt-config_0.8.15-1_all.deb'])
+    subprocess.run(['sudo', 'dpkg', '-i', 'mysql-apt-config_0.8.15-1_all.deb'])
+    subprocess.run(['sudo', 'apt', 'update'])
+    subprocess.run(['sudo', 'apt', 'install', 'mysql-server'])
+    return 'OK'
 
 def check_requirements():
    #check Python version 
