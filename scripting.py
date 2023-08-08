@@ -30,11 +30,15 @@ def install_pip():
         return (print(f"The command failed with error code: {result.returncode}"))
 
 def install_mysql():
-    subprocess.run(['wget', 'https://dev.mysql.com/get/mysql-apt-config_0.8.15-1_all.deb'])
-    subprocess.run(['sudo', 'dpkg', '-i', 'mysql-apt-config_0.8.15-1_all.deb'])
-    subprocess.run(['sudo', 'apt', 'update'])
-    subprocess.run(['sudo', 'apt', 'install', 'mysql-server'])
-    return 'OK'
+    try:
+        subprocess.run(['wget', 'https://dev.mysql.com/get/mysql-apt-config_0.8.15-1_all.deb'])
+        subprocess.run(['sudo', 'dpkg', '-i', 'mysql-apt-config_0.8.15-1_all.deb'])
+        subprocess.run(['sudo', 'apt', 'update'])
+        subprocess.run(['sudo', 'apt', 'install', 'mysql-server'])
+        subprocess.run(['sudo', 'apt', 'install', '-f', 'mysql-client=8.0* mysql-community-server=8.0* mysql-server=8.0*'])
+    except Exception as e:
+        print("Something gone wrong.")
+        print(str(e)) 
 
 def check_requirements():
    #check Python version 
@@ -58,10 +62,13 @@ def check_requirements():
     if 'Mysql-8.0.15' not in version_info:
         print("Mysql-8.0.15 will be installed now: ")
         install_mysql()
+        print("Mysql-8.0.15 installed successfully.")
     else:
         print("Mysql-8.0.15 is already installed.")
             
                                                                
 
-check_requirements()          
-install_environment()
+#check_requirements()          
+#install_environment()
+
+install_mysql()
