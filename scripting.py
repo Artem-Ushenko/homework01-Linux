@@ -6,14 +6,15 @@ import subprocess
 
 def install_environment():
     try:
-        subprocess.run(['sudo', 'pip', 'install', 'virtualenv'])
+        subprocess.run(['sudo', 'pip3', 'install', 'virtualenv'])
         os.mkdir('envs')
         subprocess.run(['virtualenv', './envs/'])
+        subprocess.run(["source", "bin/activate"], shell=True)
         git_path = "https://github.com/Manisha-Bayya/simple-django-project.git"
         subprocess.run(['git', 'clone', git_path])
         os.chdir('simple-django-project')
         venv_path = "../envs/bin/"
-        subprocess.run([venv_path + "pip", "install", "-r", "requirements.txt"])
+        subprocess.run([venv_path + "pip3", "install", "-r", "requirements.txt"])
         print("Virtual environment installed successfully.")
     except Exception as e:
         print("Something gone wrong.")
