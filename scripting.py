@@ -13,7 +13,7 @@ def install_pip():
 def install_mysql():
     pass
 
-def check_rquirements():
+def check_requirements():
     #check linux disributor id
     version_info = os.popen('lsb_release -a 2>&1').read()
     if 'Ubuntu' or 'Debian' in version_info:
@@ -26,8 +26,8 @@ def check_rquirements():
             print("Python 3.7.2 is already installed.")
 
         #check PIP install
-        version_info = os.system('pip --version')
-        if version_info not 0:
+        version_info = os.system('pip3 --version')
+        if version_info != 0:
             print("Pip will be installed now: ")
             install_pip()
         else:
