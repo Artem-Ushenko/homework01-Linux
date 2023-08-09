@@ -1,7 +1,8 @@
-#!/usr/bin/python3
+#!/usr/local/bin/python3
 
 import os
 import subprocess
+import sys
 
 
 def install_environment():
@@ -20,7 +21,27 @@ def install_environment():
         print(str(e))
 
 def install_python():
-    pass
+    if sys.version_info.major < 3:
+        subprocess.run(['wget', 'https://www.python.org/ftp/python/3.7.2/Python-3.7.2.tgz'])
+        subprocess.run(['tar', '-xvf', 'Python-3.7.2.tgz'])
+        os.chdir('Python-3.7.2')
+        subprocess.run(['./configure'])
+        subprocess.run(['make'])
+        subprocess.run(['sudo', 'make', 'install'])
+        version_info = subprocess.run(['python3','--version'], stdout=subprocess.PIPE, universal_newlines=True)
+        print(version_info.stdout + 'was installed successfully')
+    elif sys.version_info.minor < 7:
+        subprocess.run(['sudo', 'apt', 'remove', 'python3'])
+        subprocess.run(['sudo', 'apt', 'autoremove'])
+        subprocess.run(['sudo', 'apt', 'autoclean'])
+        subprocess.run(['wget', 'https://www.python.org/ftp/python/3.7.2/Python-3.7.2.tgz'])
+        subprocess.run(['tar', '-xvf', 'Python-3.7.2.tgz'])
+        os.chdir('Python-3.7.2')
+        subprocess.run(['./configure'])
+        subprocess.run(['make'])
+        subprocess.run(['sudo', 'make', 'install'])
+        version_info = subprocess.run(['python3','--version'], stdout=subprocess.PIPE, universal_newlines=True)
+        print(version_info.stdout + 'was installed successfully')
 
 def install_pip():
     result = subprocess.run(['sudo', 'apt', 'install', 'python-pip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
