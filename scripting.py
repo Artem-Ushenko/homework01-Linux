@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.7
 
 import os
 import subprocess
@@ -26,7 +26,7 @@ def check_requirements():
             print("Python 3.7.2 is already installed.")
 
         #check PIP install
-        version_info = os.system('pip3 --version')
+        version_info = subprocess.run(['pip3',  '--version'])
         if version_info != 0:
             print("Pip will be installed now: ")
             install_pip()
@@ -34,8 +34,8 @@ def check_requirements():
             print("Pip is already installed")
 
         #check MySql version
-        version_info = os.popen('mysql --version 2>&1').read()
-        if 'Mysql-8.0.15' not in version_info:
+        version_info = subprocess.run(['mysql', '--version', '2>&1'], stdout=subprocess.PIPE, text=True)
+        if 'Mysql-8.0.15' not in version_info.stdout:
             print("Mysql-8.0.15 will be installed now: ")
             install_mysql()
         else:
