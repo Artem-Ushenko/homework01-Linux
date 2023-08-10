@@ -2,12 +2,35 @@
 
 import os
 import subprocess
+import sys
 
 def virtual_environment():
     pass
 
+def install_environment():
+    try:
+        subprocess.run(['sudo', 'pip3', 'install', 'virtualenv'])
+        os.mkdir('envs')
+        subprocess.run(['virtualenv', './envs/'])
+        subprocess.run(["source", "bin/activate"], shell=True)
+        git_path = "https://github.com/Manisha-Bayya/simple-django-project.git"
+        subprocess.run(['git', 'clone', git_path])
+        os.chdir('simple-django-project')
+        venv_path = "../envs/bin/"
+        subprocess.run([venv_path + "pip3", "install", "-r", "requirements.txt"])
+        print("Virtual environment installed successfully.")
+    except Exception as e:
+        print("Something gone wrong.")
+        print(str(e))
+
 def install_python():
-    pass
+    if sys.version_info.major < 3:
+        print("Your Python version {sys.version_info.major} does not meet the requirements. Please install Python 3.7.2 or higher")
+    elif sys.version_info.minor < 7:
+        print("Your Python version {sys.version_info.major} + '.' + {sys.version_info.minor} does not meet the requirements. Please install Python 3.7.2 or higher")
+    else:
+        version_info = subprocess.run(['python3','--version'], stdout=subprocess.PIPE, universal_newlines=True)
+        print(version_info.stdout + 'already installed and meet the requirements')
 
 def install_pip():
     result = subprocess.run(['sudo', 'apt', 'install', 'python3-pip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
@@ -17,7 +40,11 @@ def install_pip():
         return (print(f"Pip install failed with error code: {result.returncode}"))
 
 def install_mysql():
-    pass
+    version_info = subprocess.run(['mysql', '--version'], capture_output=True, text=True)
+    if 'mysql  Ver 8' in version_info.stdout:
+        print(f"{version_info.stdout} already installed and meet the requirements")
+    else:
+        print(f"{version_info.stdout} does not meet the requirements. Please install Mysql 8 or higher")
 
 def check_requirements():
     #check linux disributor id
