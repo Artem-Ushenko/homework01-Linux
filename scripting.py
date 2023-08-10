@@ -4,6 +4,8 @@ import os
 import subprocess
 import sys
 
+def virtual_environment():
+    pass
 
 def install_environment():
     try:
@@ -31,11 +33,11 @@ def install_python():
         print(version_info.stdout + 'already installed and meet the requirements')
 
 def install_pip():
-    result = subprocess.run(['sudo', 'apt', 'install', 'python-pip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    result = subprocess.run(['sudo', 'apt', 'install', 'python3-pip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     if result.returncode == 0:
-        return (print("The command completed successfully."))
+        return (print("Pip was installed successfully."))
     else:
-        return (print(f"The command failed with error code: {result.returncode}"))
+        return (print(f"Pip install failed with error code: {result.returncode}"))
 
 def install_mysql():
     version_info = subprocess.run(['mysql', '--version'], capture_output=True, text=True)
@@ -74,5 +76,5 @@ def check_requirements():
     else:
         print("Please install ans use Linux Ubuntu/Debian distribution")
 
-check_requirements()          
-install_environment()
+check_requirements()
+virtual_environment()
