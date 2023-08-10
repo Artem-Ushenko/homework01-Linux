@@ -32,16 +32,16 @@ def install_python():
 def install_pip():
     result = subprocess.run(['sudo', 'apt', 'install', 'python-pip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     if result.returncode == 0:
-        print("The command completed successfully.")
+        return (print("The command completed successfully."))
     else:
-        print(f"The command failed with error code: {result.returncode}")
+        return (print(f"The command failed with error code: {result.returncode}"))
 
 def install_mysql():
-    subprocess.run(['wget', 'https://dev.mysql.com/get/mysql-apt-config_0.8.15-1_all.deb'])
-    subprocess.run(['sudo', 'dpkg', '-i', 'mysql-apt-config_0.8.15-1_all.deb'])
-    subprocess.run(['sudo', 'apt', 'update'])
-    subprocess.run(['sudo', 'apt', 'install', 'mysql-server'])
-    return 'OK'
+    version_info = subprocess.run(['mysql', '--version'], capture_output=True, text=True)
+    if 'mysql  Ver 8' in version_info.stdout:
+        print(f"{version_info.stdout} already installed and meet the requirements")
+    else:
+        print(f"{version_info.stdout} does not meet the requirements. Please install Mysql 8 or higher")
 
 def check_requirements():
     #check linux disributor id
@@ -73,6 +73,5 @@ def check_requirements():
     else:
         print("Please install ans use Linux Ubuntu/Debian distribution")
 
-#check_requirements()          
-#install_environment()
-install_python()
+check_requirements()          
+install_environment()
