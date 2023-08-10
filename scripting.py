@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import sys
 
 
 def install_environment():
@@ -20,7 +21,13 @@ def install_environment():
         print(str(e))
 
 def install_python():
-    pass
+    if sys.version_info.major < 3:
+        print("Your Python version {sys.version_info.major} does not meet the requirements. Please install Python 3.7.2 or higher")
+    elif sys.version_info.minor < 7:
+        print("Your Python version {sys.version_info.major} + '.' + {sys.version_info.minor} does not meet the requirements. Please install Python 3.7.2 or higher")
+    else:
+        version_info = subprocess.run(['python3','--version'], stdout=subprocess.PIPE, universal_newlines=True)
+        print(version_info.stdout + 'already installed and meet the requirements')
 
 def install_pip():
     result = subprocess.run(['sudo', 'apt', 'install', 'python-pip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
@@ -66,7 +73,5 @@ def check_requirements():
     else:
         print("Please install ans use Linux Ubuntu/Debian distribution")
 
-#check_requirements()          
-#install_environment()
-
-install_mysql()
+check_requirements()          
+install_environment()
