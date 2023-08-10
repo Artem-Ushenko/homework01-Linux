@@ -30,15 +30,11 @@ def install_pip():
         return (print(f"The command failed with error code: {result.returncode}"))
 
 def install_mysql():
-    try:
-        subprocess.run(['wget', 'https://dev.mysql.com/get/mysql-apt-config_0.8.15-1_all.deb'])
-        subprocess.run(['sudo', 'dpkg', '-i', 'mysql-apt-config_0.8.15-1_all.deb'])
-        subprocess.run(['sudo', 'apt', 'update'])
-        subprocess.run(['sudo', 'apt', 'install', 'mysql-server'])
-        subprocess.run(['sudo', 'apt', 'install', '-f', 'mysql-client=8.0* mysql-community-server=8.0* mysql-server=8.0*'])
-    except Exception as e:
-        print("Something gone wrong.")
-        print(str(e)) 
+    version_info = subprocess.run(['mysql', '--version'], capture_output=True, text=True)
+    if 'mysql  Ver 8' in version_info.stdout:
+        print(f"{version_info.stdout} already installed and meet the requirements")
+    else:
+        print(f"{version_info.stdout} does not meet the requirements. Please install Mysql 8 or higher")
 
 def check_requirements():
     #check linux disributor id
