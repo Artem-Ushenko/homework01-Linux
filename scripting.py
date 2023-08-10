@@ -2,16 +2,46 @@
 
 import os
 import subprocess
+import sys
 
+
+def install_environment():
+    try:
+        subprocess.run(['sudo', 'pip', 'install', 'virtualenv'])
+        os.mkdir('envs')
+        subprocess.run(['virtualenv', './envs/'])
+        git_path = "https://github.com/Manisha-Bayya/simple-django-project.git"
+        subprocess.run(['git', 'clone', git_path])
+        os.chdir('simple-django-project')
+        venv_path = "../envs/bin/"
+        subprocess.run([venv_path + "pip", "install", "-r", "requirements.txt"])
+        print("Virtual environment installed successfully.")
+    except Exception as e:
+        print("Something gone wrong.")
+        print(str(e))
 
 def install_python():
-    pass
+    if sys.version_info.major < 3:
+        print("Your Python version {sys.version_info.major} does not meet the requirements. Please install Python 3.7.2 or higher")
+    elif sys.version_info.minor < 7:
+        print("Your Python version {sys.version_info.major} + '.' + {sys.version_info.minor} does not meet the requirements. Please install Python 3.7.2 or higher")
+    else:
+        version_info = subprocess.run(['python3','--version'], stdout=subprocess.PIPE, universal_newlines=True)
+        print(version_info.stdout + 'already installed and meet the requirements')
 
 def install_pip():
-    pass
+    result = subprocess.run(['sudo', 'apt', 'install', 'python-pip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    if result.returncode == 0:
+        print("The command completed successfully.")
+    else:
+        print(f"The command failed with error code: {result.returncode}")
 
 def install_mysql():
-    pass
+    subprocess.run(['wget', 'https://dev.mysql.com/get/mysql-apt-config_0.8.15-1_all.deb'])
+    subprocess.run(['sudo', 'dpkg', '-i', 'mysql-apt-config_0.8.15-1_all.deb'])
+    subprocess.run(['sudo', 'apt', 'update'])
+    subprocess.run(['sudo', 'apt', 'install', 'mysql-server'])
+    return 'OK'
 
 def check_requirements():
     #check linux disributor id
@@ -43,4 +73,6 @@ def check_requirements():
     else:
         print("Please install ans use Linux Ubuntu/Debian distribution")
 
-check_requirements()                                             
+#check_requirements()          
+#install_environment()
+install_python()
