@@ -6,6 +6,8 @@ import sys
 
 def install_environment():
     try:
+        subprocess.run(['pip', 'install', '--upgrade', 'setuptools'])
+        subprocess.run(['pip', 'install', 'lxml']) 
         subprocess.run(['sudo', 'pip', 'install', 'virtualenv'])
         subprocess.run(["mkdir", "envs"])
         subprocess.run(['virtualenv', './envs/'])
@@ -21,7 +23,23 @@ def install_environment():
         print(str(e))
 
 def install_python():
-    pass
+    try:
+        if sys.version_info.minor < 7:
+            subprocess.run(['mkdir', 'temp'])
+            subprocess.run(['cd', 'temp'])
+            subprocess.run(['wget', 'https://www.python.org/ftp/python/3.7.2/Python-3.7.2.tgz'])
+            subprocess.run(['tar', '-xvf', 'Python-3.7.2.tgz'])
+            subprocess.run(['cd', 'Python-3.7.2.tgz'])
+            subprocess.run(['./configure'])
+            subprocess.run(['make'])
+            subprocess.run(['sudo', 'make', 'install']) 
+        else:
+            subprocess.run(['sudo', 'apt', 'update'])
+            subprocess.run(['sudo', 'apt', 'install', 'python3'])
+            print("Python 3 was installed successfully.")
+    except Exception as e:
+        print(f"Python 3 install failed...")
+        print(str(e))
    
 def install_pip():
     try:
@@ -36,21 +54,23 @@ def install_mysql():
     try:
         subprocess.run(['sudo', 'apt', 'update'])
         subprocess.run(['sudo', 'apt', 'install', 'mysql-server'])
-        version_info = subprocess.run(['mysql', '--version'], capture_output=True)
+        version_info = subprocess.run(['mysql', '--version'], capture_output=True, text=True)
         print(f"{version_info.stdout[:17]} was installed successfully.")
     except Exception as e:
-        print(f"Pip install failed.")
+        print(f"Mysql 8 install failed.")
         print(str(e))
 
 def check_requirements():
     #check Python version 
     if sys.version_info.major < 3:
-        print(f"Your Python version {sys.version_info.major} does not meet the requirements. Please install Python 3.7.2 or higher")
+        print(f"Your Python version {sys.version_info.major} does not meet the requirements.\nPython 3 will be installed now : ")
+        install_python()
     if sys.version_info.minor < 7:
-        print(f"Your Python version {sys.version_info.major} + '.' + {sys.version_info.minor} does not meet the requirements. Please install Python 3.7.2 or higher")
+        print(f"Your Python version {sys.version_info.major} + '.' + {sys.version_info.minor} does not meet the requirements.\nPython 3 will be installed now : ")
+        install_python()
     if sys.version_info.minor >= 7:
         version_info = subprocess.run(['python3', '--version'], capture_output=True)
-        print(str(version_info.stdout) + 'already installed and meet the requirements')
+        print(f"{version_info.stdout} already installed and meet the requirements")
 
     #check PIP install
     try:
@@ -61,14 +81,9 @@ def check_requirements():
         install_pip()
 
     #check MySql version
-    try:
-        version_info = subprocess.run(['mysql', '--version'], capture_output=True)
-        if 'mysql  Ver 8' not in version_info.stdout:
-            print("Mysql 8 will be installed now: ")
-            install_mysql()
-    except:
-        print("Mysql was not found on your system. It will be installed now")
-        install_mysql()
+    version_info = subprocess.run(['mysql', '--version'], capture_output=True, text=True)
+    if 'mysql  Ver 8' in version_info.stdout:
+        print(f"{version_info.stdout[:17]} already installed." )
 
 check_requirements()
 install_environment()
