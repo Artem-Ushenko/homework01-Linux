@@ -3,6 +3,62 @@
 import os
 import subprocess
 import sys
+import re
+import json
+
+
+
+def load_data_mysql(mysql_user, mysql_password, mysql_host, mysql_port, email_host, email_password_host):
+    subprocess.run(["sudo", "mysql", "-u", mysql_user, "-p", "<", "simple-django-project/world.sql"], shell=True)
+
+def modify_settings(mysql_user):
+
+    # Calculate the path to settings.py
+    settings_file_path = os.path.join("simple-django-project", "parnorbit")
+
+    # Temporarily add the directory containing settings.py to sys.path
+    sys.path.insert(0, settings_file_path)
+
+    # Import the settings module
+    from simple-django-project.panorbit import settings
+
+    # Remove the temporarily added path from sys.path
+    sys.path.remove(settings_file_path)
+
+    # Modify the DATABASES dictionary
+    settings.DATABASES['default']['USER'] = mysql_user
+    settings.DATABASES['default']['PASSWORD'] = mysql_password
+    settings.DATABASES['default']['HOST'] = mysql_host
+    settings.DATABASES['default']['PORT'] = mysql_port
+    settings.EMAIL_HOST = email_host
+    settings.EMAIL_HOST_PASSWORD = email_host_password
+
+    def replace_database_config(file_path, db_data, email_host, email_host_password):
+
+        with open(file_path, 'r') as file:
+            content = file.read()
+        # Use regex to match and replace the 'DATABASES' section
+        content = re.sub(r'DATABASES\s*=\s*{[^}]+}', db_data, content, flags=re.DOTALL)
+
+        # Use regex to match and replace 'EMAIL_HOST'
+        content = re.sub(r'EMAIL_HOST\s*=\s*\'[^\']+\'', f'EMAIL_HOST = \'{email_host}\'', content)
+
+        # Use regex to match and replace 'EMAIL_HOST_PASSWORD'
+        content = re.sub(r'EMAIL_HOST_PASSWORD\s*=\s*\'[^\']+\'', f'EMAIL_HOST_PASSWORD = \'{email_host_password}\'', content)
+
+
+        with open(file_path, 'w') as file:
+            file.write(content)
+
+    # Usage
+    file_path = 'simple\panorbit\settings.py'
+
+    db_data = 'DATABASES = {\n'+ str(json.dumps(settings.DATABASES)) # Replace with the desired content
+    email_host = str(settings.EMAIL_HOST)
+    email_host_password = str(settings.EMAIL_HOST_PASSWORD)
+
+    replace_database_config(file_path, db_data, email_host, email_host_password)
+
 
 def install_environment():
     try:
@@ -78,9 +134,28 @@ def check_requirements():
         install_pip()
 
     #check MySql version
-    version_info = subprocess.run(['mysql', '--version'], capture_output=True, text=True)
-    if 'mysql  Ver 8' in version_info.stdout:
-        print(f"{version_info.stdout[:17]} already installed." )
+    try:
+        version_info = subprocess.run(['mysql', '--version'], capture_output=True, text=True)
+        if 'mysql  Ver 8' in version_info.stdout:
+            print(f"{version_info.stdout[:17]} already installed." )
+        else:
+            print("Mysql 8 will be install now: ")
+            install_mysql()
+    except:
+        print("Mysql was not found on your system. It will be install now: ")
+        install_mysql()
 
-check_requirements()
-install_environment()
+def main():
+    #check_requirements()
+    #install_environment()
+    mysql_user = input("Plese enter your user name for Mysql DB: ")
+    #load_data_mysql(mysql_user)
+    mysql_password = input("Plese enter password for Mysql DB: ")
+    mysql_host = input("Plese enter host for Mysql DB: ")
+    mysql_port = input("Plese enter port for Mysql DB: ")
+    email_host = input("Plese enter email host for Mysql DB: ")
+    email_host_password = input("Plese enter email host password for Mysql DB: ")
+    modify_settings(mysql_user, mysql_host, mysql_port, email_host, email_host_password)
+
+if __name__ == "__main__":
+    main()
