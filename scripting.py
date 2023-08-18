@@ -8,22 +8,18 @@ import json
 
 
 
-def load_data_mysql(mysql_user, mysql_password, mysql_host, mysql_port, email_host, email_password_host):
+def load_data_mysql(mysql_user):
     subprocess.run(["sudo", "mysql", "-u", mysql_user, "-p", "<", "simple-django-project/world.sql"], shell=True)
 
-def modify_settings(mysql_user):
-
-    # Calculate the path to settings.py
-    settings_file_path = os.path.join("simple-django-project", "parnorbit")
+def modify_settings(mysql_user, mysql_password, mysql_host, mysql_port, email_host, email_host_password):
 
     # Temporarily add the directory containing settings.py to sys.path
-    sys.path.insert(0, settings_file_path)
+    sys.path.append('simple-django-project/panorbit/')
 
-    # Import the settings module
-    from simple-django-project.panorbit import settings
+    import settings
 
     # Remove the temporarily added path from sys.path
-    sys.path.remove(settings_file_path)
+    sys.path.remove('simple-django-project/panorbit/')
 
     # Modify the DATABASES dictionary
     settings.DATABASES['default']['USER'] = mysql_user
@@ -38,7 +34,7 @@ def modify_settings(mysql_user):
         with open(file_path, 'r') as file:
             content = file.read()
         # Use regex to match and replace the 'DATABASES' section
-        content = re.sub(r'DATABASES\s*=\s*{[^}]+}', db_data, content, flags=re.DOTALL)
+        content = re.sub(r'DATABASES\s*=\s*{(?:[^{}]*{[^{}]*}[^{}]*)*}', db_data, content, flags=re.DOTALL)
 
         # Use regex to match and replace 'EMAIL_HOST'
         content = re.sub(r'EMAIL_HOST\s*=\s*\'[^\']+\'', f'EMAIL_HOST = \'{email_host}\'', content)
@@ -51,14 +47,14 @@ def modify_settings(mysql_user):
             file.write(content)
 
     # Usage
-    file_path = 'simple\panorbit\settings.py'
+    file_path = 'simple-django-project/panorbit/settings.py'
+    data_bases_settings = str(json.dumps(settings.DATABASES, indent = 4))
 
-    db_data = 'DATABASES = {\n'+ str(json.dumps(settings.DATABASES)) # Replace with the desired content
+    db_data = 'DATABASES = ' + data_bases_settings  # Replace with the desired content
     email_host = str(settings.EMAIL_HOST)
     email_host_password = str(settings.EMAIL_HOST_PASSWORD)
 
     replace_database_config(file_path, db_data, email_host, email_host_password)
-
 
 def install_environment():
     try:
@@ -146,16 +142,16 @@ def check_requirements():
         install_mysql()
 
 def main():
-    #check_requirements()
-    #install_environment()
+    check_requirements()
+    install_environment()
     mysql_user = input("Plese enter your user name for Mysql DB: ")
-    #load_data_mysql(mysql_user)
+    load_data_mysql(mysql_user)
     mysql_password = input("Plese enter password for Mysql DB: ")
     mysql_host = input("Plese enter host for Mysql DB: ")
     mysql_port = input("Plese enter port for Mysql DB: ")
     email_host = input("Plese enter email host for Mysql DB: ")
     email_host_password = input("Plese enter email host password for Mysql DB: ")
-    modify_settings(mysql_user, mysql_host, mysql_port, email_host, email_host_password)
+    modify_settings(mysql_user, mysql_password, mysql_host, mysql_port, email_host, email_host_password)
 
 if __name__ == "__main__":
     main()
