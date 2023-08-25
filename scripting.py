@@ -117,15 +117,20 @@ def install_environment():
 def check_requirements():
     
     #check Python version 
-    if sys.version_info.major < 3:
-        print(f"Your Python version {sys.version_info.major} does not meet the requirements. Please use README.md to install all needed tools.")
+    try: 
+        if sys.version_info.major < 3:
+            print(f"Your Python version {sys.version_info.major} does not meet the requirements. Please use README.md to install all needed tools.")
+            exit()
+        if sys.version_info.minor < 7:
+            print(f"Your Python version {sys.version_info.major} + '.' + {sys.version_info.minor} does not meet the requirements. Please use README.md to install all needed tools.")
+            exit() 
+        if sys.version_info.major == 3 and sys.version_info.minor = 7:
+            version_info = subprocess.run(['python3', '--version'], capture_output=True)
+            print(f"{version_info.stdout} already installed and meet the requirements")
+    except Exception as e:
+        print("Something gone wrong. Please use README.md to install all needed tools.")
+        print(str(e))  
         exit()
-    if sys.version_info.minor < 7:
-        print(f"Your Python version {sys.version_info.major} + '.' + {sys.version_info.minor} does not meet the requirements. Please use README.md to install all needed tools.")
-        exit() 
-    if sys.version_info.major == 3 and sys.version_info.minor >= 7:
-        version_info = subprocess.run(['python3', '--version'], capture_output=True)
-        print(f"{version_info.stdout} already installed and meet the requirements")
 
     #check PIP install
     try:
