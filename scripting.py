@@ -1,19 +1,42 @@
 #!/usr/local/bin/python3
+#!/home/ubuntu/homework01-Linux/envs/bin/python3
 
+
+import pymysql
 import os
 import subprocess
 import sys
 import re
 import json
 
+#Function check privileges for database
+def check_mysql_permissions(mysql_user, mysql_password, mysql_host):
+    con = pymysql.connect(host=mysql_host, user=mysql_user, password=mysql_password, db='world')
+    result_list = []
+    try: 
+        with con:
+            cur = con.cursor()
+            cur.execute("SHOW GRANTS FOR 'ubuntu'@'localhost';")
 
-def check_mysql_permissions(mysql_user):
-    permission_to_mysql = subprocess.run(["mysql", "-u", f"{mysql_user} -p"], capture_output=True, shell=True)
-    if permission_to_mysql.stderr == 0:
-        print(f"Your user {mysql_user} have access to Mysql.")
-    else:
-        print(f"Access denied to Mysql for {mysql_user}.")
+            while True:
+                next_row = cur.fetchone()
+                if next_row:
+                    result_list.append(next_row[0])
+                else:
+                    break
 
+            has_all_privileges = any("GRANT ALL PRIVILEGES" in row for row in result_list)
+
+            if has_all_privileges:
+                print("You have all privileges for the 'world' database.")
+            else:
+                print("You do not have any privileges for the 'world' database.")
+        except Exception as e:
+            print("Something gone wrong. Please use README.md to install all needed tools.")
+            print(str(e))
+            exit()
+
+#Function is run a server
 def run_server():
     try:
         subprocess.run(["python3 simple-django-project/manage.py makemigrations"], shell=True)
@@ -26,6 +49,7 @@ def run_server():
         print(str(e))
         exit()
    
+#Function add information about user to simple-django-project/panorbit/settings.py
 def modify_settings(mysql_user, mysql_password, mysql_host, mysql_port, email_host_user, email_host_password):
 
     # Temporarily add the directory containing settings.py to sys.path
@@ -71,6 +95,7 @@ def modify_settings(mysql_user, mysql_password, mysql_host, mysql_port, email_ho
 
     replace_database_config(file_path, db_data, email_host, email_host_password)
 
+#Function is create a virtual environment
 def install_environment():
     try:
         subprocess.run(["pip", "install", "virtualenv"])
@@ -87,7 +112,8 @@ def install_environment():
         print("Something gone wrong. Please use README.md to install all needed tools.")
         print(str(e))
         exit()
-  
+
+#Function is check all needed tools for use
 def check_requirements():
     
     #check Python version 
@@ -123,13 +149,15 @@ def check_requirements():
 def main():
     check_requirements()
     install_environment()
+    
     mysql_user = input("Plese enter your user name for Mysql DB: ")
-    check_mysql_permissions(mysql_user)
     mysql_password = input("Plese enter password for Mysql DB: ")
     mysql_host = input("Plese enter host for Mysql DB: ")
     mysql_port = input("Plese enter port for Mysql DB: ")
     email_host_user = input("Plese enter email host for Mysql DB: ")
     email_host_password = input("Plese enter email host password for Mysql DB: ")
+    
+    check_mysql_permissions(mysql_user, mysql_host, mysql_password)
     modify_settings(mysql_user, mysql_password, mysql_host, mysql_port, email_host_user, email_host_password)
     run_server()
 
