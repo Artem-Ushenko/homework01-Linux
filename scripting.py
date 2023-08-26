@@ -11,7 +11,7 @@ import pexpect
 def check_mysql_permissions(mysql_password, mysql_user):
     try:
         #Load db world.sql to Mysql
-        mysql_queries = pexpect.spawn("mysql -u {mysql_user} -p -v < simple-django-project/world.sql")
+        mysql_queries = pexpect.spawn(f"mysql -u {mysql_user} -p -v < simple-django-project/world.sql")
         mysql_queries.expect('Enter password:')
         mysql_queries.sendline(f'{mysql_password}')
         mysql_queries = pexpect.spawn(f"mysql -u {mysql_user} -p")
