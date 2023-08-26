@@ -88,22 +88,7 @@ Install Git:
    ~ FLUSH PRIVILEGES;
    ~ EXIT;
    ```
-
-3. After cloning the [repository](https://github.com/Manisha-Bayya/simple-django-project.git), download `world.sql` to MySQL:
-
-   ```sh
-   ~ git clone https://github.com/Manisha-Bayya/simple-django-project.git
-   ~ mysql -u ubuntu -p -v < simple-django-project/world.sql
-   ~ mysql -u ubuntu -p
-   ```
-
-   Inside MySQL:
-   
-   ```sql
-   ~ USE world;
-   ~ EXIT;
-   ```
-   
+    
 ## Run script
 
 Once the dependencies are installed, you can run the script by running the following command:
