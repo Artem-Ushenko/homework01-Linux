@@ -1,11 +1,13 @@
-## Project Setup Guide
+## This is a README file for a script that installs and configures a Django project.
 
-Before using the script, you'll need to install the required dependencies:
+### How to use
+To use the script, first you need to install the dependencies:
 
 - Python 3.7.2
 - Pip
 - MySQL 8 (create a user and grant necessary permissions)
 - Git
+- Pexpect 4.8.0 (module for Python)
 
 ### Python 3.7.2
 
@@ -45,6 +47,14 @@ Before using the script, you'll need to install the required dependencies:
    ~ pip3 --version
    ```
    
+### Pexpect 4.8.0
+
+Install Pexpect:
+   ```sh
+   ~ pip install pexpect
+   ~ pip show pexpect 
+   ```
+
 ### Git
 
 Install Git:
@@ -96,13 +106,28 @@ Install Git:
    
 ## Run script
 
-Run scripting.py:
+Once the dependencies are installed, you can run the script by running the following command:
 
 ```sh
 ~ python3 scripting.py
 or
 ~ ./scripting.py
 ```
+
+The script will then install the Django project and configure it with the given settings.
+
+## Settings
+
+The script takes the following settings as input:
+
+* `mysql_user`: The username for the MySQL database.
+* `mysql_password`: The password for the MySQL database.
+* `mysql_host`: The hostname of the MySQL database.
+* `mysql_port`: The port of the MySQL database.
+* `email_host_user`: The username for the email server.
+* `email_host_password`: The password for the email server.
+
+This will install the Django project and configure it with the given settings.
 
 ## Troubleshooting
 
@@ -131,4 +156,11 @@ or
 2. Go to line 63 and check the indentation. You may find a mix of tabs and spaces.
 
 3. Convert all tabs to spaces.
-```
+
+## License
+
+The script is licensed under the MIT License.
+
+## Author
+
+The script was written by [Artem Ushenko] for DevOps01 courses.
