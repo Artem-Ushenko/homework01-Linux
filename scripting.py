@@ -1,40 +1,23 @@
 #!/usr/local/bin/python3
-#!/home/ubuntu/homework01-Linux/envs/bin/python3
 
-
-import pymysql
 import os
 import subprocess
 import sys
 import re
 import json
+import pexpect
 
 #Function check privileges for database
-def check_mysql_permissions(mysql_user, mysql_password, mysql_host):
-    con = pymysql.connect(host=mysql_host, user=mysql_user, password=mysql_password, db='world')
-    result_list = []
-    try: 
-        with con:
-            cur = con.cursor()
-            cur.execute("SHOW GRANTS FOR 'ubuntu'@'localhost';")
-
-            while True:
-                next_row = cur.fetchone()
-                if next_row:
-                    result_list.append(next_row[0])
-                else:
-                    break
-
-            has_all_privileges = any("GRANT ALL PRIVILEGES" in row for row in result_list)
-
-            if has_all_privileges:
-                print("You have all privileges for the 'world' database.")
-            else:
-                print("You do not have any privileges for the 'world' database.")
-        except Exception as e:
-            print("Something gone wrong. Please use README.md to install all needed tools.")
-            print(str(e))
-            exit()
+def check_mysql_permissions(mysql_password):
+    try:
+        check_err = pexpect.spawn("mysql world -p")
+        check_err.expect('Enter password:')
+        check_err.sendline(f'{mysql_password}')
+        check_err.expect('[>#]')
+        check_err.sendline('EXIT')
+    except Exception as e:
+        raise Exception("Something has gone wrong. Please use README.md to install all needed tools.") from e
+        exit()
 
 #Function is run a server
 def run_server():
@@ -102,7 +85,7 @@ def install_environment():
         subprocess.run(["python3", "-m", "virtualenv", "envs"])
         git_path = "https://github.com/Manisha-Bayya/simple-django-project.git"
         subprocess.run(["git", "clone", git_path])
-        status = subprocess.run(["pip", "install", "-r", "requirements.txt"], capture_output=True, text=True)
+        status = subprocess.run(["pip", "install", "-r", "simple-django-project/requirements.txt"], capture_output=True, text=True)
         if status.returncode == 0:
             print("Virtual environment installed successfully.")
         else:
@@ -124,7 +107,7 @@ def check_requirements():
         if sys.version_info.minor < 7:
             print(f"Your Python version {sys.version_info.major} + '.' + {sys.version_info.minor} does not meet the requirements. Please use README.md to install all needed tools.")
             exit() 
-        if sys.version_info.major == 3 and sys.version_info.minor = 7:
+        if sys.version_info.major == 3 and sys.version_info.minor == 7:
             version_info = subprocess.run(['python3', '--version'], capture_output=True)
             print(f"{version_info.stdout} already installed and meet the requirements")
     except Exception as e:
@@ -152,17 +135,18 @@ def check_requirements():
         exit()
 
 def main():
-    check_requirements()
-    install_environment()
+    #check_requirements()
+    #install_environment()
     
     mysql_user = input("Plese enter your user name for Mysql DB: ")
     mysql_password = input("Plese enter password for Mysql DB: ")
     mysql_host = input("Plese enter host for Mysql DB: ")
     mysql_port = input("Plese enter port for Mysql DB: ")
+    
     email_host_user = input("Plese enter email host for Mysql DB: ")
     email_host_password = input("Plese enter email host password for Mysql DB: ")
     
-    check_mysql_permissions(mysql_user, mysql_host, mysql_password)
+    check_mysql_permissions(mysql_password)
     modify_settings(mysql_user, mysql_password, mysql_host, mysql_port, email_host_user, email_host_password)
     run_server()
 
