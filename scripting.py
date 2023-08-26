@@ -7,8 +7,8 @@ import re
 import json
 import pexpect
 
-#Function check privileges for database
-def check_mysql_permissions(mysql_password, mysql_user):
+#Function load db world.sql to mysql
+def load_db(mysql_password, mysql_user):
     try:
         #Load db world.sql to Mysql
         mysql_queries = pexpect.spawn(f"mysql -u {mysql_user} -p -v < simple-django-project/world.sql")
@@ -19,7 +19,13 @@ def check_mysql_permissions(mysql_password, mysql_user):
         check_err.sendline('USE world;')
         mysql_queries.expect('[>#]')
         mysql_queries.sendline('EXIT')
-        
+    except Exception as e:
+        raise Exception("Something has gone wrong. Please use README.md to install all needed tools.") from e
+        exit()
+
+#Function check privileges for database
+def check_mysql_permissions(mysql_password, mysql_user):
+    try: 
         #Check access to db world.sql
         check_err = pexpect.spawn("mysql world -p")
         check_err.expect('Enter password:')
@@ -157,6 +163,7 @@ def main():
     email_host_user = input("Plese enter email host for Mysql DB: ")
     email_host_password = input("Plese enter email host password for Mysql DB: ")
     
+    load_db(mysql_password, mysql_user)
     check_mysql_permissions(mysql_password, mysql_user)
     modify_settings(mysql_user, mysql_password, mysql_host, mysql_port, email_host_user, email_host_password)
     run_server()
