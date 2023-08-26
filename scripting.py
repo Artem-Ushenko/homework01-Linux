@@ -8,8 +8,19 @@ import json
 import pexpect
 
 #Function check privileges for database
-def check_mysql_permissions(mysql_password):
+def check_mysql_permissions(mysql_password, mysql_user):
     try:
+        #Load db world.sql to Mysql
+        mysql_queries = pexpect.spawn("mysql -u {mysql_user} -p -v < simple-django-project/world.sql")
+        mysql_queries.expect('Enter password:')
+        mysql_queries.sendline(f'{mysql_password}')
+        mysql_queries = pexpect.spawn(f"mysql -u {mysql_user} -p")
+        mysql_queries.expect('[>#]')
+        check_err.sendline('USE world;')
+        mysql_queries.expect('[>#]')
+        mysql_queries.sendline('EXIT')
+        
+        #Check access to db world.sql
         check_err = pexpect.spawn("mysql world -p")
         check_err.expect('Enter password:')
         check_err.sendline(f'{mysql_password}')
@@ -135,8 +146,8 @@ def check_requirements():
         exit()
 
 def main():
-    #check_requirements()
-    #install_environment()
+    check_requirements()
+    install_environment()
     
     mysql_user = input("Plese enter your user name for Mysql DB: ")
     mysql_password = input("Plese enter password for Mysql DB: ")
@@ -146,7 +157,7 @@ def main():
     email_host_user = input("Plese enter email host for Mysql DB: ")
     email_host_password = input("Plese enter email host password for Mysql DB: ")
     
-    check_mysql_permissions(mysql_password)
+    check_mysql_permissions(mysql_password, mysql_user)
     modify_settings(mysql_user, mysql_password, mysql_host, mysql_port, email_host_user, email_host_password)
     run_server()
 
