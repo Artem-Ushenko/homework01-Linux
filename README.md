@@ -1,6 +1,9 @@
 ## This is a README file for a script that installs and configures a Django project.
 
 ### How to use
+
+>This script was testing on Ubuntu 22.04
+
 To use the script, first you need to install the dependencies:
 
 - Python 3.7.2
